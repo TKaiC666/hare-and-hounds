@@ -26,13 +26,6 @@ function CreateGamesystem(){
         
         function Field(){
             this.units = new Array(10);
-        
-            function Unit(connectList,isEmpty){
-                this.connectTo = connectList;
-                this.isEmpty = isEmpty;
-                console.log("Create new unit object");
-            }
-        
             this.units[0] = new Unit([1,2,3],true);
             this.units[1] = new Unit([0,2,4,5],true);
             this.units[2] = new Unit([0,1,3,5],true);
@@ -44,6 +37,24 @@ function CreateGamesystem(){
             this.units[8] = new Unit([5,7,9,10],true);
             this.units[9] = new Unit([5,6,8,10],true);
             this.units[10] = new Unit([7,8,9],true);
+            this.getMovable = function(index){
+                let arr = new Array();
+                let target = this.units[index].connectTo;
+                for(var i = 0; i < target.length; i++){
+                    if(this.units[target[i]].isEmpty) arr.push(target[i]);
+                }
+                return arr;
+            }
+            this.getUnits = function(){
+                return this.units;
+            }
+        
+            function Unit(connectList,isEmpty){
+                this.connectTo = connectList;
+                this.isEmpty = isEmpty;
+                console.log("Create new unit object");
+            }
+            
         
             console.log("Create new field array");
         }
@@ -108,7 +119,10 @@ function CreateGamesystem(){
         while(judgement){
             houndsTurn();
             rabbitTurn();
+            console.log(this.field.getUnits());
         }
+        // houndsTurn();
+        // rabbitTurn();
         return true;
 
         function pawnSetting(playerSelec){
@@ -131,14 +145,9 @@ function CreateGamesystem(){
 
         function rabbitTurn(){
             //for test
-            let range = GS.rabbit.positionData.connectTo;
-            let possibleRange = new Array();
-            for(var i = 0; i < range.length; i++){
-                if(GS.field.units[range[i]].isEmpty === true){
-                possibleRange.push(GS.field.units[i]);
-                console.log(`儲存${GS.field.units[i]}`);
-                }
-            }
+            let targetIndex = GS.rabbit.position;
+            let possibleRange = GS.field.getMovable(targetIndex);
+            console.log(possibleRange);
             let hint = possibleRange;
             let newPosition = prompt(`請問下一步要往?\n可前往${hint}\n`);
             GS.rabbit.moveTo(newPosition);
