@@ -112,26 +112,5 @@
         </div>
     </div>
     <script src="js/main.js"></script>
-    <script>
-        moveHare();
-        function moveHare(){
-            let element = document.getElementsByClassName("hare")[0];
-
-            element.addEventListener("mouseover",function(event){
-                element.classList.add("overPawn");
-            });
-
-            element.addEventListener("mouseout",function(event){
-                element.classList.remove("overPawn");
-            });
-
-            element.addEventListener("click",function(event){
-                GS.hare.state = "selected";
-                console.log("select hare");
-            });
-
-            element.addEventListener("drag")
-        }
-    </script>
 </body>
 </html>

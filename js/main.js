@@ -1,7 +1,7 @@
 //import Field from './field.js';
 
 let GS = CreateGamesystem();
-GS.initial();
+GS.init();
 GS.running();
 
 function CreateGamesystem(){
@@ -12,7 +12,7 @@ function CreateGamesystem(){
     GS.player;
     GS.CPU;
 
-    GS.initial = function(){
+    GS.init = function(){
 
         console.warn("initial start");
 
@@ -52,7 +52,7 @@ function CreateGamesystem(){
             function Piece(index,connectList,isEmpty){
                 this.connectTo = connectList;
                 this.isEmpty = isEmpty;
-                this.element = document.getElementsByClassName("piece")[index];
+                this.element = document.getElementsByClassName("piece")["p"+index];
 
                 console.log("Create new piece");
             }
@@ -63,10 +63,12 @@ function CreateGamesystem(){
 
         function Pawn(type,no){
             let index = 0;
+            let element = {};
             this.type=type;
         
             if(type === "hare"){
                 index = 0;
+                element = document.getElementsByClassName("hare")[0];
             }
             else if(type === "hound"){
                 if(no===1) index = 7;
@@ -77,6 +79,7 @@ function CreateGamesystem(){
                     return undefined;
                 }
                 this.number = no;
+                element = document.getElementsByClassName("hound")[this.number-1];
             }
             else{
                 console.error("Wrong parameter : type unfound");
@@ -87,6 +90,20 @@ function CreateGamesystem(){
             this.positionData = GS.field.pieces[this.position];
             this.positionData.isEmpty = false;
             this.positionData.pawn = type;
+            this.element = element;
+            this.selected = false;
+
+            this.getConnectTo = function(){
+                return this.positionData.connectTo;
+            }
+
+            this.getSelected = function(){
+                return this.selected;
+            }
+
+            this.setSelected = function(bool){
+                this.selected = bool;
+            }
         
             this.moveTo = function(index){
                 var old = this.position;
@@ -111,49 +128,46 @@ function CreateGamesystem(){
     //先實作一種對戰狀態，玩家兔子 vs CPU獵犬
     //遊戲規則是獵犬先手
     GS.running = function(){
-
         console.warn("running game...");
 
-        let player;
-        let CPU;
+        let wait = false;
+        setEvent(this.hounds[1]);
+        setEvent(this.hare);
 
-        pawnSetting("hare");
-        // while(judgement){
-        //     houndsTurn();
-        //     hareTurn();
-        //     console.log(this.field.getPieces());
-        // }
-        // houndsTurn();
-        // hareTurn();
-        return true;
-
-        function pawnSetting(playerSelec){
-            player = playerSelec;
-            CPU = player === "hare" ? "hounds" : "hare";
-            console.log(`${player} is player, ${CPU} is CPU`);
-        }
-
-        function houndsTurn(){
-            let randNum = Math.floor(Math.random() * 3);
-            let moveRange = GS.field.pieces[GS.hounds[randNum].position].connectTo;
-            let randTarget = Math.floor(Math.random() * moveRange.length);
-            let newPosition;
-            while(GS.field.pieces[moveRange[randTarget]].isEmpty !== true){
-                randTarget = Math.floor(Math.random() * moveRange.length);
+        function setEvent(pawn){
+            let target = pawn;
+            let connectList = target.positionData.connectTo;
+            let index = 0;
+            let around;
+            let once = {once : true};
+            target.element.parentElement.addEventListener('click',selectPawn,once);
+            wait = true;
+            function selectPawn(){
+                console.log(`select ${target.type}`);
+                for (let i = 0; i < connectList.length; i++){
+                    console.log("creat click event of piece["+connectList[i]+"]");
+                    around = GS.field.pieces[connectList[i]].element;
+                    around.addEventListener('click',setAround);
+                }
             }
-            newPosition = moveRange[randTarget];
-            GS.hounds[randNum].moveTo(newPosition);
 
+            function setAround(event){
+                index = Number(event.target.id.substring(1));
+                target.moveTo(index);
+                target.element.parentElement.removeChild(target.element.parentElement.lastElementChild);
+                event.target.appendChild(target.element);
+                target.setSelected(false);
+                for (let i = 0; i < connectList.length; i++){
+                    around = GS.field.pieces[connectList[i]].element;
+                    around.removeEventListener('click',setAround);
+                    console.log("remove click event of piece["+connectList[i]+"]");
+                }
+                wait = false;
+            }
         }
 
-        function hareTurn(){
-            //for test
-            let targetIndex = GS.hare.position;
-            let possibleRange = GS.field.getMovable(targetIndex);
-            console.log(possibleRange);
-            let hint = possibleRange;
-            let newPosition = prompt(`請問下一步要往?\n可前往${hint}\n`);
-            GS.hare.moveTo(newPosition);
+        function removeEvent(pawn){
+
         }
 
         function judgement(){
