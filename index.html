@@ -8,109 +8,19 @@
     <style>
         html, body{
             margin: 0;
-            padding: 0;
+        }
+
+        html{
+            height: 100%;
         }
 
         body{
-            background: rgb(0, 82, 44) url(images/tabletop.jpg) center center fixed no-repeat;
-            background-size: cover;
+            height: inherit;
         }
-
-        .wrapper{
-            width: 90%;
-            margin: 50px auto 0px auto;
-        }
-
-        .field{
-            margin: 0 auto;
-        }
-
-        .row{
-            height: 150px;
-            margin-bottom: 100px;
-        }
-
-        .row:nth-of-type(2n+1) .piece:nth-of-type(1){
-            margin-left: 250px;
-        }
-
-        .row:last-child{
-            margin-bottom: 0px;
-        }
-
-        .piece{
-            display: inline-block;
-            width: 150px;
-            height: 150px;
-            border-radius: 150px;
-            margin-right: 100px;
-            background: #fff;
-            box-shadow: inset 0 0 0 0 rgba(255, 255, 255, 0);
-            transition: box-shadow .15s;
-        }
-
-        .piece:hover{
-            cursor: pointer;
-            box-shadow: inset 0 0 10px 4px black;
-        }
-
-        @keyframes shadowIn{
-            from{
-                box-shadow: inset 0 0 0 0 rgba(255, 255, 255, 0);
-            }
-            to{
-                box-shadow: inset 0 0 10px 4px black;
-            }
-        }
-
-        .pawns{
-            width: 100px;
-            height: 100px;
-            margin: 25px auto;
-        }
-
-        .hare{
-            background: url(images/hare.png) no-repeat;
-            background-size: 100% 100%;
-        }
-
-        .hound{
-            background: url(images/hound.png) no-repeat;
-            background-size: 100% 100%;
-            transform: scaleX(-1);
-        }
-
-        .overPawn{
-            position: relative;
-            bottom: 50px;
-        }
-        
     </style>
-    <!-- <script type="module" src="js/field.js"></script>
-    <script nomodule src="js/field.js"></script> -->
 </head>
 <body>
-    <div class="wrapper">
-        <div class="field">
-            <div class="row">
-                <div id="p1" class="piece"></div>
-                <div id="p4" class="piece"></div>
-                <div id="p7" class="piece"><div class="pawns hound"></div></div>
-            </div>
-            <div class="row">
-                <div id="p0" class="piece"><div class="pawns hare"></div></div>
-                <div id="p2" class="piece"></div>
-                <div id="p5" class="piece"></div>
-                <div id="p8" class="piece"></div>
-                <div id="p10" class="piece"><div class="pawns hound"></div></div>
-            </div>
-            <div class="row">
-                <div id="p3" class="piece"></div>
-                <div id="p6" class="piece"></div>
-                <div id="p9" class="piece"><div class="pawns hound"></div></div>
-            </div>
-        </div>
-    </div>
+    <canvas></canvas>
     <script src="main.js"></script>
 </body>
 </html>
