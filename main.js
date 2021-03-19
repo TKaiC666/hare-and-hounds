@@ -29,17 +29,17 @@ Piece.prototype.draw = function(){
 
 function Field(){
     this.pieces = new Array(11);
-    this.pieces[0] = new Piece([1,2,3], false, new Hare(158, 307), 228, 377, 70);
-    this.pieces[1] = new Piece([0,2,4,5], true, null, 498, 149, 70);
-    this.pieces[2] = new Piece([0,1,3,5], true, null, 498, 377, 70);
-    this.pieces[3] = new Piece([0,2,5,6], true, null, 498, 605, 70);
-    this.pieces[4] = new Piece([1,5,7], true, null, 768, 149, 70);
+    this.pieces[0] = new Piece([1,2,3],    false, new Hare(158, 307), 228, 377, 70);
+    this.pieces[1] = new Piece([0,2,4,5],  true,  null, 498, 149, 70);
+    this.pieces[2] = new Piece([0,1,3,5],  true,  null, 498, 377, 70);
+    this.pieces[3] = new Piece([0,2,5,6],  true,  null, 498, 605, 70);
+    this.pieces[4] = new Piece([1,5,7],    true,  null, 768, 149, 70);
     this.pieces[5] = new Piece([1,2,3,4,6,7,8,9], true, null, 768, 377, 70);
-    this.pieces[6] = new Piece([3,5,9], true, null, 768, 605, 70);
+    this.pieces[6] = new Piece([3,5,9],    true,  null, 768, 605, 70);
     this.pieces[7] = new Piece([4,5,8,10], false, new Hound(968, 79, 0), 1038, 149, 70);
-    this.pieces[8] = new Piece([5,7,9,10], true, null, 1038, 377, 70);
+    this.pieces[8] = new Piece([5,7,9,10], true,  null, 1038, 377, 70);
     this.pieces[9] = new Piece([5,6,8,10], false, new Hound(968, 535, 1), 1038, 605, 70);
-    this.pieces[10] = new Piece([7,8,9], false, new Hound(1238, 307, 2), 1308, 377, 70);
+    this.pieces[10] = new Piece([7,8,9],   false, new Hound(1238, 307, 2), 1308, 377, 70);
 }
 
 Field.prototype.init = function(){
@@ -53,6 +53,8 @@ Field.prototype.init = function(){
 };
 
 Field.prototype.draw = function(){
+    ctx.fillStyle = 'rgba(43,100,35)';
+    ctx.fillRect(0, 0, width, height);
     let pieces = this.pieces;
     for(var i = 0; i < pieces.length; i++){
         pieces[i].draw();
@@ -65,7 +67,6 @@ function Pawn(x, y){
 }
 
 Pawn.prototype.init = function(){};
-
 Pawn.prototype.draw = function(){};
 
 function Hare(x, y){
@@ -113,16 +114,65 @@ Hound.prototype.draw = function(){
 
 //=====================running=====================
 
-ctx.fillStyle = 'rgba(43,100,35)';
-ctx.fillRect(0, 0, width, height);
 
 let field = new Field();
 field.init();
+let _hare = { 'current' : {}, 'index' : 0, 'isClicked' : false};
+let _hounds = new Array(3);
+let houndsTurn = true;
+let test = function(event){
+    //確認是否點擊在Pawn的範圍上
+    if( (event.clientX >= _hare.current.x) &&
+        (event.clientX <= _hare.current.x + _hare.current.img.width) &&
+        (event.clientY >= _hare.current.y) &&
+        (event.clientX <= _hare.current.y + _hare.current.img.height) &&
+        houndsTurn === false){
+            console.log("hare");
+            //如果是，在確認是否點擊在與其相連的格子內。
+            // if(_hare.isClicked){
+            //     for( var j = 0; j < field.pieces[_hare.index].surrounding.length; j++){
+            //        var originX = field.pieces[_hare.index].x;
+            //        var originY = field.pieces[_hare.index].y;
+            //        if(Math.sqrt((event.x - originX)*(event.x - originX) + (event.y - originY)*(event.y - originY))
+            //           <= field.pieces[_hare.index].size){
+            //               console.log("nice");
+            //         }else{
+            //             console.log('out of range');
+            //         }
+            //     }
+            // }
+            // _hare.isClicked = true;
+            houndsTurn = !houndsTurn;
+    }
+    for( var i = 0; i < _hounds.length; i++){
+        if( (event.clientX >= _hounds[i].x) &&
+            (event.clientX <= _hounds[i].x + _hounds[i].img.width) &&
+            (event.clientY >= _hounds[i].y) &&
+            (event.clientY <= _hounds[i].y + _hounds[i].img.height) &&
+            houndsTurn === true && _hare.isClicked === false){
+            console.log("hound "+i);
+            houndsTurn = !houndsTurn;
+        }
+    }
+}
+canvas.addEventListener('click', test);
 
 function loop(){
+    var houndNum = 0;
+    for( var i = 0; i < field.pieces.length; i++){
+        if( field.pieces[i].pawn !== null){
+            if( field.pieces[i].pawn.constructor === Hare){
+                _hare.current = field.pieces[i].pawn;
+                _hare.index = i;
+            }else if( field.pieces[i].pawn.constructor === Hound){
+                _hounds[houndNum] = field.pieces[i].pawn;
+                houndNum++;
+            }
+        }
+    } 
     field.draw();
 
     requestAnimationFrame(loop);
 }
 
-//loop();
+loop();
