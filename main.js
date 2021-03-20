@@ -120,31 +120,43 @@ field.init();
 let _hare = { 'current' : {}, 'index' : 0, 'isClicked' : false};
 let _hounds = new Array(3);
 let houndsTurn = true;
+let clkOutRange = false;
 let test = function(event){
-    //確認是否點擊在Pawn的範圍上
+    //如果已經點擊過Hare，確認是否點擊在與其相連的格子內。
+    if(_hare.isClicked){
+        _hare.isClicked = false;
+        for( var j = 0; j < field.pieces[_hare.index].surrounding.length; j++){
+           var selectP = field.pieces[_hare.index].surrounding[j];
+           var originX = field.pieces[selectP].x;
+           var originY = field.pieces[selectP].y;
+           if(Math.sqrt((event.x - originX)*(event.x - originX) + (event.y - originY)*(event.y - originY))
+              <= field.pieces[_hare.index].size &&
+              field.pieces[selectP].isEmpty){
+                console.log("nice");
+                //將兔子移動到點選的位置
+                _hare.current.x = originX - field.pieces[j].size;
+                _hare.current.y = originY - field.pieces[j].size;
+                field.pieces[_hare.index].isEmpty = true;
+                field.pieces[_hare.index].pawn = null;
+                field.pieces[selectP].isEmpty = false; 
+                field.pieces[selectP].pawn = _hare.current;
+                //---------------------
+                houndsTurn = !houndsTurn;
+                j = field.pieces[_hare.index].surrounding.length + 1;
+            }
+        }
+    }
+    //是否點擊在Pawn的範圍上
     if( (event.clientX >= _hare.current.x) &&
         (event.clientX <= _hare.current.x + _hare.current.img.width) &&
         (event.clientY >= _hare.current.y) &&
-        (event.clientX <= _hare.current.y + _hare.current.img.height) &&
+        (event.clientY <= _hare.current.y + _hare.current.img.height) &&
         houndsTurn === false){
-            console.log("hare");
-            //如果是，在確認是否點擊在與其相連的格子內。
-            // if(_hare.isClicked){
-            //     for( var j = 0; j < field.pieces[_hare.index].surrounding.length; j++){
-            //        var originX = field.pieces[_hare.index].x;
-            //        var originY = field.pieces[_hare.index].y;
-            //        if(Math.sqrt((event.x - originX)*(event.x - originX) + (event.y - originY)*(event.y - originY))
-            //           <= field.pieces[_hare.index].size){
-            //               console.log("nice");
-            //         }else{
-            //             console.log('out of range');
-            //         }
-            //     }
-            // }
-            // _hare.isClicked = true;
-            houndsTurn = !houndsTurn;
+        _hare.isClicked = true;
+        console.log("hare");
+        //houndsTurn = !houndsTurn;
     }
-    for( var i = 0; i < _hounds.length; i++){
+    for(var i = 0; i < _hounds.length; i++){
         if( (event.clientX >= _hounds[i].x) &&
             (event.clientX <= _hounds[i].x + _hounds[i].img.width) &&
             (event.clientY >= _hounds[i].y) &&
