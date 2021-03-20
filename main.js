@@ -89,6 +89,14 @@ Field.prototype.drawLine = function(){
     ctx.lineTo(this.pieces[9].x, this.pieces[9].y);
     ctx.moveTo(this.pieces[7].x, this.pieces[7].y);
     ctx.lineTo(this.pieces[3].x, this.pieces[3].y);
+    ctx.moveTo(this.pieces[0].x, this.pieces[0].y);
+    ctx.lineTo(this.pieces[1].x, this.pieces[1].y);
+    ctx.moveTo(this.pieces[0].x, this.pieces[0].y);
+    ctx.lineTo(this.pieces[3].x, this.pieces[3].y);
+    ctx.moveTo(this.pieces[10].x, this.pieces[10].y);
+    ctx.lineTo(this.pieces[7].x, this.pieces[7].y);
+    ctx.moveTo(this.pieces[10].x, this.pieces[10].y);
+    ctx.lineTo(this.pieces[9].x, this.pieces[9].y);
     ctx.lineWidth = 10;
     ctx.stroke();
 }
@@ -160,7 +168,6 @@ field.init();
 let _hare = { 'current' : {}, 'index' : 0, 'isClicked' : false};
 let _hounds = new Array(3);
 let houndsTurn = true;
-let clkOutRange = false;
 let test = function(event){
     //如果已經點擊過Hare，確認是否點擊在與其相連的格子內。
     if(_hare.isClicked){
@@ -221,13 +228,13 @@ function loop(){
                 houndNum++;
             }
         }
-    } 
+    }
     field.draw();
     if(_hare.isClicked){
         for( var i = 0; i < field.pieces[_hare.index].surrounding.length; i++){
             if(field.pieces[field.pieces[_hare.index].surrounding[i]].isEmpty){
                 field.pieces[field.pieces[_hare.index].surrounding[i]].drawHint();
-                field.drawHint(field.pieces[_hare.index], field.pieces[field.pieces[_hare.index].surrounding[i]]);
+                //field.drawHint(field.pieces[_hare.index], field.pieces[field.pieces[_hare.index].surrounding[i]]);
             }
         }
     }
