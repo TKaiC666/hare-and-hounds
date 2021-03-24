@@ -42,8 +42,7 @@ function Field(){
     this.pieces[2] = new Piece([0,1,3,5],  true,  null, 498, 377, 70);
     this.pieces[3] = new Piece([0,2,5,6],  true,  null, 498, 605, 70);
     this.pieces[4] = new Piece([1,5,7],    true,  null, 768, 149, 70);
-    this.pieces[5] = 
-    new Piece([1,2,3,4,6,7,8,9], true, null, 768, 377, 70);
+    this.pieces[5] = new Piece([1,2,3,4,6,7,8,9], true, null, 768, 377, 70);
     this.pieces[6] = new Piece([3,5,9],    true,  null, 768, 605, 70);
     this.pieces[7] = new Piece([4,5,8,10], false, new Hound(983, 94, false, 0), 1038, 149, 70);
     this.pieces[8] = new Piece([5,7,9,10], true,  null, 1038, 377, 70);
@@ -216,12 +215,10 @@ let test = function(event){
         if(_hounds.current[i].clicked){
             _hounds.current[i].clicked = false;
             _s = getHoundSurrounding(_hounds.index[i]);
-            console.log(_s);
             for( var j = 0; j < _s.length; j++){
                 var selectP = _s[j];
                 var originX = field.pieces[selectP].x;
                 var originY = field.pieces[selectP].y;
-                var _index = _hounds.index[i];
                 if(Math.sqrt((event.x - originX)*(event.x - originX) + (event.y - originY)*(event.y - originY))
                     <= field.pieces[_hounds.index[i]].size &&
                     field.pieces[selectP].isEmpty){
@@ -258,6 +255,7 @@ let test = function(event){
             houndsTurn === true && _hare.current.clicked === false){
             console.log("hound "+i);
             _hounds.current[i].clicked = true;
+            console.log(getHoundSurrounding(_hounds.index[i]));
         }
     }
 }
@@ -308,8 +306,21 @@ function loop(){
             }
         }
     }
+    var id = 0;
+    id = requestAnimationFrame(loop);
 
-    requestAnimationFrame(loop);
+    //如果兔子輸了，停止遊戲
+    var count = field.pieces[_hare.index].surrounding;
+    var num = 0;
+    for(var i = 0; i < count.length; i++){
+        if(field.pieces[count[i]].isEmpty===false) num++;
+    }
+    if(num === count.length){
+        canvas.removeEventListener('click',test);
+        cancelAnimationFrame(id);
+        alert("Hare is lose");
+    }
+
 }
 
 loop();
