@@ -7,16 +7,16 @@ const width = canvas.width = window.innerWidth;
 const height = canvas.height = window.innerHeight;
 
 //=====================objects=====================
-function Piece(surrounding, isEmpty, pawn, x, y, size){
+function Grid(surrounding, isEmpty, piece, x, y, size){
     this.surrounding = surrounding;
     this.isEmpty = isEmpty;
-    this.pawn = pawn;
+    this.piece = piece;
     this.x = x;
     this.y = y;
     this.size = size;
 }
 
-Piece.prototype.drawHint = function(){
+Grid.prototype.drawHint = function(){
     ctx.beginPath();
     ctx.strokeStyle = 'red';
     ctx.arc(this.x , this.y, this.size, 0, 2 * Math.PI);
@@ -24,38 +24,38 @@ Piece.prototype.drawHint = function(){
     ctx.stroke();
 }
 
-Piece.prototype.draw = function(){
+Grid.prototype.draw = function(){
     ctx.beginPath();
     ctx.fillStyle = 'white';
     ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
     ctx.fill();
-    if(this.pawn !== null){
+    if(this.piece !== null){
         //在init前會執行一次。但是這時image沒有src，圖跑不出來。
-        this.pawn.draw();
+        this.piece.draw();
     }
 };
 
 function Field(){
-    this.pieces = new Array(11);
-    this.pieces[0] = new Piece([1,2,3],    false, new Hare(173, 322, false), 228, 377, 70);
-    this.pieces[1] = new Piece([0,2,4,5],  true,  null, 498, 149, 70);
-    this.pieces[2] = new Piece([0,1,3,5],  true,  null, 498, 377, 70);
-    this.pieces[3] = new Piece([0,2,5,6],  true,  null, 498, 605, 70);
-    this.pieces[4] = new Piece([1,5,7],    true,  null, 768, 149, 70);
-    this.pieces[5] = new Piece([1,2,3,4,6,7,8,9], true, null, 768, 377, 70);
-    this.pieces[6] = new Piece([3,5,9],    true,  null, 768, 605, 70);
-    this.pieces[7] = new Piece([4,5,8,10], false, new Hound(983, 94, false, 0), 1038, 149, 70);
-    this.pieces[8] = new Piece([5,7,9,10], true,  null, 1038, 377, 70);
-    this.pieces[9] = new Piece([5,6,8,10], false, new Hound(983, 550, false, 1), 1038, 605, 70);
-    this.pieces[10] = new Piece([7,8,9],   false, new Hound(1258, 322, false, 2), 1308, 377, 70);
+    this.grid = new Array(11);
+    this.grid[0] = new Grid([1,2,3],    false, new Hare(173, 322, false), 228, 377, 70);
+    this.grid[1] = new Grid([0,2,4,5],  true,  null, 498, 149, 70);
+    this.grid[2] = new Grid([0,1,3,5],  true,  null, 498, 377, 70);
+    this.grid[3] = new Grid([0,2,5,6],  true,  null, 498, 605, 70);
+    this.grid[4] = new Grid([1,5,7],    true,  null, 768, 149, 70);
+    this.grid[5] = new Grid([1,2,3,4,6,7,8,9], true, null, 768, 377, 70);
+    this.grid[6] = new Grid([3,5,9],    true,  null, 768, 605, 70);
+    this.grid[7] = new Grid([4,5,8,10], false, new Hound(983, 94, false, 0), 1038, 149, 70);
+    this.grid[8] = new Grid([5,7,9,10], true,  null, 1038, 377, 70);
+    this.grid[9] = new Grid([5,6,8,10], false, new Hound(983, 550, false, 1), 1038, 605, 70);
+    this.grid[10] = new Grid([7,8,9],   false, new Hound(1258, 322, false, 2), 1308, 377, 70);
 }
 
 Field.prototype.init = function(){
     // this.draw();
-    let pieces = this.pieces;
-    for( var i = 0; i < pieces.length; i++){
-        if(pieces[i].pawn !== null){
-            pieces[i].pawn.init();
+    let grids = this.grid;
+    for( var i = 0; i < grids.length; i++){
+        if(grids[i].piece !== null){
+            grids[i].piece.init();
         } 
     }
 };
@@ -64,39 +64,39 @@ Field.prototype.draw = function(){
     ctx.fillStyle = 'rgba(43,100,35)';
     ctx.fillRect(0, 0, width, height);
     field.drawLine();
-    let pieces = this.pieces;
-    for(var i = 0; i < pieces.length; i++){
-        pieces[i].draw();
+    let grids = this.grid;
+    for(var i = 0; i < grids.length; i++){
+        grids[i].draw();
     }
 };
 
 Field.prototype.drawLine = function(){
     ctx.beginPath();
     ctx.strokeStyle = 'black';
-    ctx.moveTo(this.pieces[1].x, this.pieces[1].y);
-    ctx.lineTo(this.pieces[7].x, this.pieces[7].y);
-    ctx.moveTo(this.pieces[0].x, this.pieces[0].y);
-    ctx.lineTo(this.pieces[10].x, this.pieces[10].y);
-    ctx.moveTo(this.pieces[3].x, this.pieces[3].y);
-    ctx.lineTo(this.pieces[9].x, this.pieces[9].y);
-    ctx.moveTo(this.pieces[1].x, this.pieces[1].y);
-    ctx.lineTo(this.pieces[3].x, this.pieces[3].y);
-    ctx.moveTo(this.pieces[4].x, this.pieces[4].y);
-    ctx.lineTo(this.pieces[6].x, this.pieces[6].y);
-    ctx.moveTo(this.pieces[7].x, this.pieces[7].y);
-    ctx.lineTo(this.pieces[9].x, this.pieces[9].y);
-    ctx.moveTo(this.pieces[1].x, this.pieces[1].y);
-    ctx.lineTo(this.pieces[9].x, this.pieces[9].y);
-    ctx.moveTo(this.pieces[7].x, this.pieces[7].y);
-    ctx.lineTo(this.pieces[3].x, this.pieces[3].y);
-    ctx.moveTo(this.pieces[0].x, this.pieces[0].y);
-    ctx.lineTo(this.pieces[1].x, this.pieces[1].y);
-    ctx.moveTo(this.pieces[0].x, this.pieces[0].y);
-    ctx.lineTo(this.pieces[3].x, this.pieces[3].y);
-    ctx.moveTo(this.pieces[10].x, this.pieces[10].y);
-    ctx.lineTo(this.pieces[7].x, this.pieces[7].y);
-    ctx.moveTo(this.pieces[10].x, this.pieces[10].y);
-    ctx.lineTo(this.pieces[9].x, this.pieces[9].y);
+    ctx.moveTo(this.grid[1].x, this.grid[1].y);
+    ctx.lineTo(this.grid[7].x, this.grid[7].y);
+    ctx.moveTo(this.grid[0].x, this.grid[0].y);
+    ctx.lineTo(this.grid[10].x, this.grid[10].y);
+    ctx.moveTo(this.grid[3].x, this.grid[3].y);
+    ctx.lineTo(this.grid[9].x, this.grid[9].y);
+    ctx.moveTo(this.grid[1].x, this.grid[1].y);
+    ctx.lineTo(this.grid[3].x, this.grid[3].y);
+    ctx.moveTo(this.grid[4].x, this.grid[4].y);
+    ctx.lineTo(this.grid[6].x, this.grid[6].y);
+    ctx.moveTo(this.grid[7].x, this.grid[7].y);
+    ctx.lineTo(this.grid[9].x, this.grid[9].y);
+    ctx.moveTo(this.grid[1].x, this.grid[1].y);
+    ctx.lineTo(this.grid[9].x, this.grid[9].y);
+    ctx.moveTo(this.grid[7].x, this.grid[7].y);
+    ctx.lineTo(this.grid[3].x, this.grid[3].y);
+    ctx.moveTo(this.grid[0].x, this.grid[0].y);
+    ctx.lineTo(this.grid[1].x, this.grid[1].y);
+    ctx.moveTo(this.grid[0].x, this.grid[0].y);
+    ctx.lineTo(this.grid[3].x, this.grid[3].y);
+    ctx.moveTo(this.grid[10].x, this.grid[10].y);
+    ctx.lineTo(this.grid[7].x, this.grid[7].y);
+    ctx.moveTo(this.grid[10].x, this.grid[10].y);
+    ctx.lineTo(this.grid[9].x, this.grid[9].y);
     ctx.lineWidth = 10;
     ctx.stroke();
 }
@@ -109,22 +109,22 @@ Field.prototype.drawHint = function(startP, endP){
     ctx.stroke();
 }
 
-function Pawn(x, y, clicked){
+function Piece(x, y, clicked){
     this.x = x;
     this.y = y;
     this.clicked = clicked;
 }
 
-Pawn.prototype.init = function(){};
-Pawn.prototype.draw = function(){};
+Piece.prototype.init = function(){};
+Piece.prototype.draw = function(){};
 //Pawn.prototype.isClicked = function(){};
 
 function Hare(x, y, clicked){
-    Pawn.call(this,x ,y ,clicked);
+    Piece.call(this,x ,y ,clicked);
     this.img = new Image();
     this.imgSrc = 'images/hare.png';
 }
-Hare.prototype = Object.create(Pawn.prototype);
+Hare.prototype = Object.create(Piece.prototype);
 Hare.prototype.constructor = Hare;
 
 Hare.prototype.init = function(){
@@ -141,12 +141,12 @@ Hare.prototype.draw = function(){
 };
 
 function Hound(x, y, clicked, index){
-    Pawn.call(this, x, y, clicked);
+    Piece.call(this, x, y, clicked);
     this.index = index;
     this.img = new Image();
     this.imgSrc = 'images/hound.png';
 }
-Hound.prototype = Object.create(Pawn.prototype);
+Hound.prototype = Object.create(Piece.prototype);
 Hound.prototype.constructor = Hound;
 
 Hound.prototype.init = function(){
@@ -170,43 +170,91 @@ field.init();
 let _hare = { 'current' : {}, 'index' : 0 };
 let _hounds = { 'current' : new Array(3), 'index' : new Array(3) };
 let houndsTurn = true;
-let whosTurn = '';
+let roundCounter = 1;
+let round = document.querySelector('h1');
+let winOrLose = '';
+let isEnd = false;
+
+
+function getHareSurround(){
+    var temp = field.grid[_hare.index].surrounding;
+    var result = new Array();
+    for(var i = 0; i < temp.length; i++){
+        if(field.grid[temp[i]].isEmpty) result.push(temp[i]);   
+    }
+    return result;
+}
 
 function getHoundSurrounding(index){
     var col = Math.floor((index - 1) / 3);
     var max = (col + 1) * 3;
-    var _surrounding = field.pieces[index].surrounding;
+    var _surrounding = field.grid[index].surrounding;
     var new_surrounding = new Array();
     for(var i = 0; i < _surrounding.length; i++){
-        if(_surrounding[i] <= max && field.pieces[ _surrounding[i]].isEmpty === true){
+        if(_surrounding[i] <= max && field.grid[ _surrounding[i]].isEmpty === true){
             new_surrounding.push(_surrounding[i]);
         }
     }
     return new_surrounding;
 }
 
+function getAllHoundsSurrounding(){
+    var houndsSurround = new Array;
+    var temp_houndS = new Array;
+    for(var i = 0 ; i < _hounds.current.length; i++){
+        temp_houndS[i] = getHoundSurrounding(_hounds.index[i]);
+    }
+    temp_houndS = temp_houndS.flat();
+    temp_houndS.sort((a,b) => a - b);
+    for(var i = 0 ; i < temp_houndS.length; i++){
+        var temp = temp_houndS[i];
+        for(var j = i+1; j < temp_houndS.length; j++){
+            if(temp === temp_houndS[j]) temp_houndS[j] = undefined;
+        }
+    }
+    houndsSurround = temp_houndS.sort((a,b) => a - b).filter(a => a !== undefined);
+    return houndsSurround;
+}
+
+function getHareIsFree(){
+    var bool = false;
+    var hareSurround = getHareSurround();
+    var houndsSurround = getAllHoundsSurrounding();
+    for(var i = 0; i < hareSurround.length; i++){
+        //houndsSurround.find(e => e === )
+    }
+    return bool;
+}
+
+function EndGame(id, string){
+    canvas.removeEventListener('click',test);
+    cancelAnimationFrame(id);
+    alert('Hare is '+string);
+}
+
 let test = function(event){
     //2. 如果已經點擊過Hare，確認是否點擊在與其相連的格子內。
     if(_hare.current.clicked){
         _hare.current.clicked = false;
-        for( var j = 0; j < field.pieces[_hare.index].surrounding.length; j++){
-            var selectP = field.pieces[_hare.index].surrounding[j];
-            var originX = field.pieces[selectP].x;
-            var originY = field.pieces[selectP].y;
+        for( var j = 0; j < field.grid[_hare.index].surrounding.length; j++){
+            var selectP = field.grid[_hare.index].surrounding[j];
+            var originX = field.grid[selectP].x;
+            var originY = field.grid[selectP].y;
             if(Math.sqrt((event.x - originX)*(event.x - originX) + (event.y - originY)*(event.y - originY))
-                <= field.pieces[_hare.index].size &&
-                field.pieces[selectP].isEmpty){
+                <= field.grid[_hare.index].size &&
+                field.grid[selectP].isEmpty){
                 console.log("nice");
                 //將兔子移動到點選的位置
                 _hare.current.x = originX - _hare.current.img.width/2;
                 _hare.current.y = originY - _hare.current.img.height/2;
-                field.pieces[_hare.index].isEmpty = true;
-                field.pieces[_hare.index].pawn = null;
-                field.pieces[selectP].isEmpty = false; 
-                field.pieces[selectP].pawn = _hare.current;
+                field.grid[_hare.index].isEmpty = true;
+                field.grid[_hare.index].piece = null;
+                field.grid[selectP].isEmpty = false; 
+                field.grid[selectP].piece = _hare.current;
                 //---------------------
                 houndsTurn = !houndsTurn;
-                j = field.pieces[_hare.index].surrounding.length;
+                roundCounter++;
+                j = field.grid[_hare.index].surrounding.length;
             }
         }
     }
@@ -217,22 +265,23 @@ let test = function(event){
             _s = getHoundSurrounding(_hounds.index[i]);
             for( var j = 0; j < _s.length; j++){
                 var selectP = _s[j];
-                var originX = field.pieces[selectP].x;
-                var originY = field.pieces[selectP].y;
+                var originX = field.grid[selectP].x;
+                var originY = field.grid[selectP].y;
                 if(Math.sqrt((event.x - originX)*(event.x - originX) + (event.y - originY)*(event.y - originY))
-                    <= field.pieces[_hounds.index[i]].size &&
-                    field.pieces[selectP].isEmpty){
+                    <= field.grid[_hounds.index[i]].size &&
+                    field.grid[selectP].isEmpty){
                     console.log("nice");
                     //將獵犬移動到點選的位置
                     _hounds.current[i].x = originX - _hounds.current[i].img.width/2;
                     _hounds.current[i].y = originY - _hounds.current[i].img.height/2;
-                    field.pieces[_hounds.index[i]].isEmpty = true;
-                    field.pieces[_hounds.index[i]].pawn = null;
-                    field.pieces[selectP].isEmpty = false; 
-                    field.pieces[selectP].pawn = _hounds.current[i];
+                    field.grid[_hounds.index[i]].isEmpty = true;
+                    field.grid[_hounds.index[i]].piece = null;
+                    field.grid[selectP].isEmpty = false; 
+                    field.grid[selectP].piece = _hounds.current[i];
                     //---------------------
                     houndsTurn = !houndsTurn;
-                    j = field.pieces[_hounds.index[i]].surrounding.length;
+                    roundCounter++;
+                    j = field.grid[_hounds.index[i]].surrounding.length;
                 }
             }
         }
@@ -262,31 +311,34 @@ let test = function(event){
 canvas.addEventListener('click', test);
 
 function loop(){
+    round.innerHTML = '現在回合 : ' + roundCounter;
+
     //抓Hare和Hound的資料
     var houndNum = 0;
-    for( var i = 0; i < field.pieces.length; i++){
-        if( field.pieces[i].pawn !== null){
-            if( field.pieces[i].pawn.constructor === Hare){
-                _hare.current = field.pieces[i].pawn; 
+    for( var i = 0; i < field.grid.length; i++){
+        if( field.grid[i].piece !== null){
+            if( field.grid[i].piece.constructor === Hare){
+                _hare.current = field.grid[i].piece; 
                 _hare.index = i;
-            }else if( field.pieces[i].pawn.constructor === Hound){
-                _hounds.current[houndNum] = field.pieces[i].pawn;
+            }else if( field.grid[i].piece.constructor === Hound){
+                _hounds.current[houndNum] = field.grid[i].piece;
                 _hounds.index[houndNum] = i;
                 houndNum++;
             }
         }
     }
+
     //畫棋盤和提示
     field.draw();
     if(_hare.current.clicked){
-        for( var i = 0; i < field.pieces[_hare.index].surrounding.length; i++){
-            if(field.pieces[field.pieces[_hare.index].surrounding[i]].isEmpty){
-                field.drawHint(field.pieces[_hare.index], field.pieces[field.pieces[_hare.index].surrounding[i]]);
-                field.pieces[field.pieces[_hare.index].surrounding[i]].draw();
-                field.pieces[field.pieces[_hare.index].surrounding[i]].drawHint();
+        for( var i = 0; i < field.grid[_hare.index].surrounding.length; i++){
+            if(field.grid[field.grid[_hare.index].surrounding[i]].isEmpty){
+                field.drawHint(field.grid[_hare.index], field.grid[field.grid[_hare.index].surrounding[i]]);
+                field.grid[field.grid[_hare.index].surrounding[i]].draw();
+                field.grid[field.grid[_hare.index].surrounding[i]].drawHint();
             }
-            if(i === field.pieces[_hare.index].surrounding.length - 1){
-                field.pieces[_hare.index].draw();
+            if(i === field.grid[_hare.index].surrounding.length - 1){
+                field.grid[_hare.index].draw();
             }
         }
     }
@@ -294,14 +346,14 @@ function loop(){
         if(_hounds.current[i].clicked){
             var _s = getHoundSurrounding(_hounds.index[i]);
             for( var j = 0; j < _s.length; j++){
-                if(field.pieces[_s[j]].isEmpty){
-                    field.drawHint(field.pieces[_hounds.index[i]], field.pieces[_s[j]]);
-                    field.pieces[_s[j]].draw();
-                    field.pieces[_s[j]].drawHint();
+                if(field.grid[_s[j]].isEmpty){
+                    field.drawHint(field.grid[_hounds.index[i]], field.grid[_s[j]]);
+                    field.grid[_s[j]].draw();
+                    field.grid[_s[j]].drawHint();
                 }
 
                 if(j === _s.length - 1){
-                    field.pieces[_hounds.index[i]].draw();
+                    field.grid[_hounds.index[i]].draw();
                 }
             }
         }
@@ -309,16 +361,26 @@ function loop(){
     var id = 0;
     id = requestAnimationFrame(loop);
 
-    //如果兔子輸了，停止遊戲
-    var count = field.pieces[_hare.index].surrounding;
-    var num = 0;
-    for(var i = 0; i < count.length; i++){
-        if(field.pieces[count[i]].isEmpty===false) num++;
+    //判斷兔子贏或輸，其中一個成立就停止遊戲。
+    //兔子是否贏
+    if(roundCounter >= 30 || getHareIsFree()){
+        isEnd = true;
+        winOrLose = 'Win';
+    }else{
+        //兔子是否輸
+        var count = field.grid[_hare.index].surrounding;
+        var num = 0;
+        for(var i = 0; i < count.length; i++){
+            if(field.grid[count[i]].isEmpty===false) num++;
+        }
+        if(num === count.length){
+            isEnd = true;
+            winOrLose = 'Lose';
+        }
     }
-    if(num === count.length){
-        canvas.removeEventListener('click',test);
-        cancelAnimationFrame(id);
-        alert("Hare is lose");
+
+    if(isEnd){
+        EndGame(id, winOrLose);
     }
 
 }
