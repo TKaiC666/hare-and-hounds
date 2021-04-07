@@ -117,7 +117,7 @@ function Piece(x, y, clicked){
 
 Piece.prototype.init = function(){};
 Piece.prototype.draw = function(){};
-//Pawn.prototype.isClicked = function(){};
+Piece.prototype.update = function(){};
 
 function Hare(x, y, clicked){
     Piece.call(this,x ,y ,clicked);
@@ -217,13 +217,19 @@ function getAllHoundsSurrounding(){
 }
 
 function getHareIsFree(){
-    var bool = false;
+    var isFree = false;
     var hareSurround = getHareSurround();
     var houndsSurround = getAllHoundsSurrounding();
     for(var i = 0; i < hareSurround.length; i++){
-        //houndsSurround.find(e => e === )
+        if(houndsSurround.indexOf(hareSurround[i]) === -1 &&
+           houndsSurround.findIndex(e => e > hareSurround[i]) === -1 &&
+           hareSurround[i] > 0 &&
+           roundCounter > 2){ 
+            isFree = true;
+            break;
+        }
     }
-    return bool;
+    return isFree;
 }
 
 function EndGame(id, string){
