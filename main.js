@@ -7,6 +7,10 @@ const width = canvas.width = window.innerWidth;
 const height = canvas.height = window.innerHeight;
 
 //=====================objects=====================
+function GameManager(){
+    
+}
+
 function Grid(surrounding, isEmpty, piece, x, y, size){
     this.surrounding = surrounding;
     this.isEmpty = isEmpty;
