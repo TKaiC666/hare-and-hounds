@@ -50,13 +50,13 @@ GameManager.prototype.getAllHoundsSurrounding = function(){
 
 }
 
-function Cell(surrounding, isEmpty, piece, x, y, size){
+function Cell(surrounding, isEmpty, piece, x, y){
     this.surrounding = surrounding;
     this.isEmpty = isEmpty;
     this.piece = piece;
     this.x = x;
     this.y = y;
-    this.size = size;
+    this.size = height/12;
 }
 
 Cell.prototype.drawHint = function(){
@@ -80,17 +80,17 @@ Cell.prototype.draw = function(){
 
 function GameBoard(){
     this.cell = new Array(11);
-    this.cell[0] = new Cell([1,2,3],    false, new Hare(173, 322, false), 228, 377, 70);
-    this.cell[1] = new Cell([0,2,4,5],  true,  null, 498, 149, 70);
-    this.cell[2] = new Cell([0,1,3,5],  true,  null, 498, 377, 70);
-    this.cell[3] = new Cell([0,2,5,6],  true,  null, 498, 605, 70);
-    this.cell[4] = new Cell([1,5,7],    true,  null, 768, 149, 70);
-    this.cell[5] = new Cell([1,2,3,4,6,7,8,9], true, null, 768, 377, 70);
-    this.cell[6] = new Cell([3,5,9],    true,  null, 768, 605, 70);
-    this.cell[7] = new Cell([4,5,8,10], false, new Hound(983, 94, false, 0), 1038, 149, 70);
-    this.cell[8] = new Cell([5,7,9,10], true,  null, 1038, 377, 70);
-    this.cell[9] = new Cell([5,6,8,10], false, new Hound(983, 550, false, 1), 1038, 605, 70);
-    this.cell[10] = new Cell([7,8,9],   false, new Hound(1258, 322, false, 2), 1308, 377, 70);
+    this.cell[0] = new Cell([1,2,3],    false, new Hare(width/6-55, height*2/4-55, false), width/6, height*2/4);
+    this.cell[1] = new Cell([0,2,4,5],  true,  null, width*2/6, height/4);
+    this.cell[2] = new Cell([0,1,3,5],  true,  null, width*2/6, height*2/4);
+    this.cell[3] = new Cell([0,2,5,6],  true,  null, width*2/6, height*3/4);
+    this.cell[4] = new Cell([1,5,7],    true,  null, width*3/6, height/4);
+    this.cell[5] = new Cell([1,2,3,4,6,7,8,9], true, null, width*3/6, height*2/4);
+    this.cell[6] = new Cell([3,5,9],    true,  null, width*3/6, height*3/4);
+    this.cell[7] = new Cell([4,5,8,10], false, new Hound(width*4/6-55, height/4-55, false, 0), width*4/6, height/4);
+    this.cell[8] = new Cell([5,7,9,10], true,  null, width*4/6, height*2/4);
+    this.cell[9] = new Cell([5,6,8,10], false, new Hound(width*4/6-55, height*3/4-55, false, 1), width*4/6, height*3/4);
+    this.cell[10] = new Cell([7,8,9],   false, new Hound(width*5/6-55, height*2/4-55, false, 2), width*5/6, height*2/4);
 }
 
 GameBoard.prototype.init = function(){
@@ -217,6 +217,7 @@ let _hare = { 'current' : {}, 'index' : 0 };
 let _hounds = { 'current' : new Array(3), 'index' : new Array(3) };
 let houndsTurn = true;
 let roundCounter = 1;
+let _roundCounter = roundCounter;
 let round = document.querySelector('h1');
 let winOrLose = '';
 let isEnd = false;
@@ -363,7 +364,10 @@ let test = function(event){
 canvas.addEventListener('click', test);
 
 function loop(){
-    round.innerHTML = '現在回合 : ' + roundCounter;
+    if(_roundCounter !== roundCounter){
+        round.innerHTML = '現在回合 : ' + roundCounter;
+    }
+    _roundCounter = roundCounter;
 
     //抓Hare和Hound的資料
     var houndNum = 0;
