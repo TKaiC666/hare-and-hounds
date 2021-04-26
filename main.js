@@ -59,14 +59,6 @@ function Cell(surrounding, isEmpty, piece, x, y){
     this.size = height/12;
 }
 
-Cell.prototype.drawHint = function(){
-    ctx.beginPath();
-    ctx.strokeStyle = 'red';
-    ctx.arc(this.x , this.y, this.size, 0, 2 * Math.PI);
-    ctx.lineWidth = 10;
-    ctx.stroke();
-}
-
 Cell.prototype.draw = function(){
     ctx.beginPath();
     ctx.fillStyle = 'white';
@@ -77,6 +69,14 @@ Cell.prototype.draw = function(){
         this.piece.draw();
     }
 };
+
+Cell.prototype.drawHint = function(){
+    ctx.beginPath();
+    ctx.strokeStyle = 'red';
+    ctx.arc(this.x , this.y, this.size, 0, 2 * Math.PI);
+    ctx.lineWidth = height/70;
+    ctx.stroke();
+}
 
 function GameBoard(){
     this.cell = new Array(11);
@@ -140,7 +140,8 @@ GameBoard.prototype.drawLine = function(){
     ctx.lineTo(this.cell[7].x, this.cell[7].y);
     ctx.moveTo(this.cell[10].x, this.cell[10].y);
     ctx.lineTo(this.cell[9].x, this.cell[9].y);
-    ctx.lineWidth = 10;
+    // ctx.lineWidth = 10;
+    ctx.lineWidth = height/70;
     ctx.stroke();
 }
 
@@ -149,6 +150,7 @@ GameBoard.prototype.drawHint = function(startP, endP){
     ctx.strokeStyle = 'red';
     ctx.moveTo(startP.x,startP.y);
     ctx.lineTo(endP.x, endP.y);
+    ctx.lineWidth = height/70;
     ctx.stroke();
 }
 
